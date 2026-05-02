@@ -1008,3 +1008,83 @@ body {
         left: 240px;
     }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   MENÚ LATERAL DEL EXAMEN
+   ═══════════════════════════════════════════════════════════════ */
+
+.exam-sidebar {
+    width: 220px;
+    background: var(--bg-panel);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    z-index: 50;
+}
+
+.exam-sidebar-header {
+    padding: 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.mode-indicator.examen {
+    background: #4caf50;
+    color: #fff;
+}
+
+.exam-sidebar-menu {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    gap: 5px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PANEL FÍSICO - BOTÓN DE RETORNO
+   ═══════════════════════════════════════════════════════════════ */
+
+.panel-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.btn-return-home {
+    background: linear-gradient(180deg, var(--accent-orange) 0%, var(--accent-orange-dark) 100%);
+    border: 1px solid var(--accent-orange-dark);
+    color: #000;
+    padding: 12px 20px;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.btn-return-home:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+}
+
+.btn-return-home .icon {
+    font-size: 18px;
+}
+
+/* Ajustar layout del examen para sidebar */
+.examen-layout {
+    display: flex;
+    height: 100vh;
+    background: #000;
+}
+
+.examen-layout .config-panel {
+    width: 280px;
+}
+
+.examen-layout .image-area {
+    flex: 1;
+}

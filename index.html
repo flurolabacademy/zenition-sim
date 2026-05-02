@@ -356,6 +356,26 @@
         <!-- PANTALLA 4: EXAMEN EN VIVO -->
         <div id="screen-examen" class="screen">
             <div class="examen-layout">
+                <!-- Menú lateral del examen -->
+                <div class="exam-sidebar" id="exam-sidebar">
+                    <div class="exam-sidebar-header">
+                        <div class="mode-indicator examen">Examen</div>
+                    </div>
+                    <nav class="exam-sidebar-menu">
+                        <button class="menu-item" onclick="volverAPrograma()">
+                            <span class="icon">🏠</span>
+                            <span>Volver a Programa</span>
+                        </button>
+                        <button class="menu-item highlight" onclick="seleccionarAnatomiaDesdeExamen()">
+                            <span class="icon">🫀</span>
+                            <span>Seleccionar anatomía</span>
+                        </button>
+                        <button class="menu-item" onclick="guardarExamenYVolver()">
+                            <span class="icon">💾</span>
+                            <span>Guardar examen</span>
+                        </button>
+                    </nav>
+                </div>
                 <!-- Panel lateral de configuración -->
                 <div class="config-panel" id="config-panel">
                     <div class="config-header">
@@ -481,7 +501,13 @@
                     <!-- Panel físico del arco en C (ocultable) -->
                     <div class="panel-fisico" id="panel-fisico">
                         <button class="close-panel" onclick="togglePanelFisico()">✕</button>
-                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'%3E%3Ccircle cx='200' cy='200' r='190' fill='%23ddd' stroke='%23999' stroke-width='2'/%3E%3Ccircle cx='200' cy='200' r='170' fill='none' stroke='%23999' stroke-width='1'/%3E%3C!-- Teclado QWERTY --%3E%3Ctext x='280' y='100' font-size='12' fill='%23666'%3EQ W E R T Y%3C/text%3E%3Ctext x='280' y='120' font-size='12' fill='%23666'%3EA S D F G H%3C/text%3E%3Ctext x='280' y='140' font-size='12' fill='%23666'%3EZ X C V B N%3C/text%3E%3C!-- Joystick --%3E%3Ccircle cx='200' cy='200' r='40' fill='%23ccc'/%3E%3Ccircle cx='200' cy='200' r='30' fill='%23f90'/%3E%3Cpath d='M200 175 L200 185 M200 215 L200 225 M175 200 L185 200 M215 200 L225 200' stroke='%23fff' stroke-width='3'/%3E%3C!-- Botones función --%3E%3Crect x='120' y='120' width='30' height='30' rx='5' fill='%23999'/%3E%3Crect x='120' y='160' width='30' height='30' rx='5' fill='%23999'/%3E%3Crect x='120' y='200' width='30' height='30' rx='5' fill='%23999'/%3E%3Crect x='120' y='240' width='30' height='30' rx='5' fill='%23999'/%3E%3Crect x='250' y='250' width='30' height='30' rx='5' fill='%23999'/%3E%3Crect x='290' y='250' width='30' height='30' rx='5' fill='%23999'/%3E%3Crect x='250' y='290' width='30' height='30' rx='5' fill='%23999'/%3E%3Crect x='290' y='290' width='30' height='30' rx='5' fill='%23999'/%3E%3C/svg%3E" alt="Panel de control" class="panel-img">
+                        <div class="panel-content">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'%3E%3Ccircle cx='200' cy='200' r='190' fill='%23ddd' stroke='%23999' stroke-width='2'/%3E%3Ccircle cx='200' cy='200' r='170' fill='none' stroke='%23999' stroke-width='1'/%3E%3Ctext x='280' y='100' font-size='12' fill='%23666'%3EQ W E R T Y%3C/text%3E%3Ctext x='280' y='120' font-size='12' fill='%23666'%3EA S D F G H%3C/text%3E%3Ctext x='280' y='140' font-size='12' fill='%23666'%3EZ X C V B N%3C/text%3E%3Ccircle cx='200' cy='200' r='40' fill='%23ccc'/%3E%3Ccircle cx='200' cy='200' r='30' fill='%23f90'/%3E%3Cpath d='M200 175 L200 185 M200 215 L200 225 M175 200 L185 200 M215 200 L225 200' stroke='%23fff' stroke-width='3'/%3E%3Crect x='120' y='120' width='30' height='30' rx='5' fill='%23999'/%3E%3Crect x='120' y='160' width='30' height='30' rx='5' fill='%23999'/%3E%3Crect x='120' y='200' width='30' height='30' rx='5' fill='%23999'/%3E%3Crect x='120' y='240' width='30' height='30' rx='5' fill='%23999'/%3E%3Crect x='250' y='250' width='30' height='30' rx='5' fill='%23999'/%3E%3Crect x='290' y='250' width='30' height='30' rx='5' fill='%23999'/%3E%3Crect x='250' y='290' width='30' height='30' rx='5' fill='%23999'/%3E%3Crect x='290' y='290' width='30' height='30' rx='5' fill='%23999'/%3E%3C/svg%3E" alt="Panel de control" class="panel-img">
+                            <button class="btn-return-home" onclick="volverAPrograma()">
+                                <span class="icon">🏠</span>
+                                <span>Volver a Programa</span>
+                            </button>
+                        </div>
                     </div>
 
                     <button class="show-panel-btn" id="show-panel-btn" onclick="togglePanelFisico()">🎮 Mostrar panel</button>

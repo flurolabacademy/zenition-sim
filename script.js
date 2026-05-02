@@ -1,6 +1,6 @@
 // ═══════════════════════════════════════════════════════════════
-// PHILIPS ZENITION 70 - SIMULADOR C-ARM & ANGIOGRAFÍA
-// Lógica principal
+// PHILIPS ZENITION 70 - SIMULADOR C-ARM & ANGIOGRAFIA
+// Logica principal
 // ═══════════════════════════════════════════════════════════════
 
 // Estado global
@@ -11,12 +11,12 @@ let examenActual = null;
 let anatomiaSeleccionada = '';
 let contrasteSeleccionado = 'Yodo';
 
-// Subtipos de exámenes
+// Subtipos de examenes
 const subtipos = {
-    trauma: ['Cabeza', 'Tórax', 'Columna', 'Pelvis/Raquis lumbar', 'Miembros Superiores', 'Cadera/Miembros Inferiores'],
-    urologia: ['Riñón', 'Litotricia', 'Vejiga', 'Ureterografía'],
-    endoscopia: ['ERCP', 'Esófago', 'Bronquios'],
-    vascular: ['Cerebral', 'Cayado aórtico', 'Abdominal', 'Brazo', 'Pierna', 'Bolo técnica'],
+    trauma: ['Cabeza', 'Torax', 'Columna', 'Pelvis/Raquis lumbar', 'Miembros Superiores', 'Cadera/Miembros Inferiores'],
+    urologia: ['Rinon', 'Litotricia', 'Vejiga', 'Ureterografia'],
+    endoscopia: ['ERCP', 'Esofago', 'Bronquios'],
+    vascular: ['Cerebral', 'Cayado aortico', 'Abdominal', 'Brazo', 'Pierna', 'Bolo tecnica'],
     cardio: ['Marcapasos'],
     'trat-dolor': ['Cabeza', 'Cuello', 'Columna', 'Pelvis/Raquis lumbar', 'Brazo', 'Cadera/Miembros Inferiores']
 };
@@ -32,24 +32,24 @@ const iconosExamenes = {
 };
 
 // ═══════════════════════════════════════════════════════════════
-// INICIALIZACIÓN
+// INICIALIZACION
 // ═══════════════════════════════════════════════════════════════
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function() {
     renderTablaPacientes();
     renderTablaRevision();
     setupTabs();
     setupProcedureButtons();
 
-    // Cargar pacientes de ejemplo si está vacío
+    // Cargar pacientes de ejemplo si esta vacio
     if (pacientes.length === 0) {
         cargarPacientesEjemplo();
     }
 });
 
 function cargarPacientesEjemplo() {
-    const ejemplos = [
-        { nombre: 'TEST 01', sexo: 'D', fechaNac: '', id: '0001', tipoPrincipal: 'urologia', tipoSubtipo: 'Riñón', medico: '', fechaExamen: '27 abr 2026' }
+    var ejemplos = [
+        { nombre: 'TEST 01', sexo: 'D', fechaNac: '', id: '0001', tipoPrincipal: 'urologia', tipoSubtipo: 'Rinon', medico: '', fechaExamen: '27 abr 2026' }
     ];
     pacientes = ejemplos;
     guardarPacientes();
@@ -57,20 +57,28 @@ function cargarPacientesEjemplo() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// NAVEGACIÓN ENTRE PANTALLAS
+// NAVEGACION ENTRE PANTALLAS
 // ═══════════════════════════════════════════════════════════════
 
 function showScreen(screenId) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById('screen-' + screenId).classList.add('active');
+    var screens = document.querySelectorAll('.screen');
+    for (var i = 0; i < screens.length; i++) {
+        screens[i].classList.remove('active');
+    }
+    var target = document.getElementById('screen-' + screenId);
+    if (target) target.classList.add('active');
 }
 
 function setupTabs() {
-    document.querySelectorAll('.tab').forEach(tab => {
-        tab.addEventListener('click', () => {
-            const tabName = tab.dataset.tab;
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
+    var tabs = document.querySelectorAll('.tab');
+    for (var i = 0; i < tabs.length; i++) {
+        tabs[i].addEventListener('click', function() {
+            var tabName = this.dataset.tab;
+            var allTabs = document.querySelectorAll('.tab');
+            for (var j = 0; j < allTabs.length; j++) {
+                allTabs[j].classList.remove('active');
+            }
+            this.classList.add('active');
 
             if (tabName === 'programa') {
                 showScreen('programa');
@@ -80,7 +88,7 @@ function setupTabs() {
                 renderTablaRevision();
             }
         });
-    });
+    }
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -88,23 +96,30 @@ function setupTabs() {
 // ═══════════════════════════════════════════════════════════════
 
 function renderTablaPacientes() {
-    const tbody = document.getElementById('tabla-pacientes');
+    var tbody = document.getElementById('tabla-pacientes');
+    if (!tbody) return;
+
     if (pacientes.length === 0) {
         tbody.innerHTML = '<div class="empty-message">No hay pacientes programados. Haga clic en "Agregar" para crear uno.</div>';
         return;
     }
 
-    tbody.innerHTML = pacientes.map((p, idx) => `
-        <div class="table-row ${pacienteSeleccionado === idx ? 'selected' : ''}" onclick="seleccionarPaciente(${idx})">
-            <div class="col-checkbox">☐</div>
-            <div class="col-nombre">${p.nombre || 'Sin nombre'}</div>
-            <div class="col-sexo">${p.sexo || 'D'}</div>
-            <div class="col-fecha">${p.fechaNac || ''}</div>
-            <div class="col-id">${p.id || ''}</div>
-            <div class="col-tipo">${p.tipoPrincipal ? (p.tipoPrincipal + '-' + p.tipoSubtipo) : ''}</div>
-            <div class="col-medico">${p.medico || ''}</div>
-        </div>
-    `).join('');
+    var html = '';
+    for (var i = 0; i < pacientes.length; i++) {
+        var p = pacientes[i];
+        var selectedClass = (pacienteSeleccionado === i) ? 'selected' : '';
+        var tipoText = p.tipoPrincipal ? (p.tipoPrincipal + '-' + p.tipoSubtipo) : '';
+        html += '<div class="table-row ' + selectedClass + '" onclick="seleccionarPaciente(' + i + ')">' +
+            '<div class="col-checkbox">☐</div>' +
+            '<div class="col-nombre">' + (p.nombre || 'Sin nombre') + '</div>' +
+            '<div class="col-sexo">' + (p.sexo || 'D') + '</div>' +
+            '<div class="col-fecha">' + (p.fechaNac || '') + '</div>' +
+            '<div class="col-id">' + (p.id || '') + '</div>' +
+            '<div class="col-tipo">' + tipoText + '</div>' +
+            '<div class="col-medico">' + (p.medico || '') + '</div>' +
+        '</div>';
+    }
+    tbody.innerHTML = html;
 }
 
 function seleccionarPaciente(idx) {
@@ -121,23 +136,23 @@ function guardarPacientes() {
 // ═══════════════════════════════════════════════════════════════
 
 function actualizarSubtipos() {
-    const principal = document.getElementById('tipo-examen-principal').value;
-    const subtipoSelect = document.getElementById('tipo-examen-subtipo');
+    var principal = document.getElementById('tipo-examen-principal').value;
+    var subtipoSelect = document.getElementById('tipo-examen-subtipo');
 
     subtipoSelect.innerHTML = '<option value="">Seleccionar subtipo...</option>';
 
     if (principal && subtipos[principal]) {
-        subtipos[principal].forEach(sub => {
-            const opt = document.createElement('option');
-            opt.value = sub;
-            opt.textContent = sub;
+        for (var i = 0; i < subtipos[principal].length; i++) {
+            var opt = document.createElement('option');
+            opt.value = subtipos[principal][i];
+            opt.textContent = subtipos[principal][i];
             subtipoSelect.appendChild(opt);
-        });
+        }
     }
 }
 
 function anadirALista() {
-    const paciente = obtenerDatosFormulario();
+    var paciente = obtenerDatosFormulario();
     if (!paciente.nombre) {
         alert('Ingrese al menos el nombre del paciente');
         return;
@@ -150,7 +165,7 @@ function anadirALista() {
 }
 
 function iniciarExamenDesdeForm() {
-    const paciente = obtenerDatosFormulario();
+    var paciente = obtenerDatosFormulario();
     if (!paciente.nombre) {
         alert('Ingrese al menos el nombre del paciente');
         return;
@@ -160,21 +175,21 @@ function iniciarExamenDesdeForm() {
     guardarPacientes();
     pacienteSeleccionado = pacientes.length - 1;
 
-    // Ir a selección de anatomía
+    // Ir a seleccionar anatomía primero
     showScreen('seleccion');
     setupProcedureForPatient(paciente.tipoPrincipal);
 }
 
 function obtenerDatosFormulario() {
-    const dia = document.getElementById('dia-nac').value;
-    const mes = document.getElementById('mes-nac').value;
-    const anio = document.getElementById('anio-nac').value;
-    let fechaNac = '';
+    var dia = document.getElementById('dia-nac').value;
+    var mes = document.getElementById('mes-nac').value;
+    var anio = document.getElementById('anio-nac').value;
+    var fechaNac = '';
     if (dia || mes || anio) {
-        fechaNac = `${dia} ${mes} ${anio}`.trim();
+        fechaNac = (dia + ' ' + mes + ' ' + anio).trim();
     }
 
-    const sexoRadio = document.querySelector('input[name="sexo"]:checked');
+    var sexoRadio = document.querySelector('input[name="sexo"]:checked');
 
     return {
         nombre: document.getElementById('nombre-paciente').value,
@@ -198,49 +213,56 @@ function cancelarFormulario() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// SELECCIÓN DE TIPO DE EXAMEN / ANATOMÍA
+// SELECCION DE TIPO DE EXAMEN / ANATOMIA
 // ═══════════════════════════════════════════════════════════════
 
 function setupProcedureButtons() {
-    document.querySelectorAll('.proc-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.proc-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-
-            const proc = btn.dataset.proc;
-            mostrarAnatomia(proc);
+    var btns = document.querySelectorAll('.proc-btn');
+    for (var i = 0; i < btns.length; i++) {
+        btns[i].addEventListener('click', function() {
+            var allBtns = document.querySelectorAll('.proc-btn');
+            for (var j = 0; j < allBtns.length; j++) {
+                allBtns[j].classList.remove('active');
+            }
+            this.classList.add('active');
+            mostrarAnatomia(this.dataset.proc);
         });
-    });
+    }
 }
 
 function setupProcedureForPatient(tipoPrincipal) {
-    document.querySelectorAll('.proc-btn').forEach(btn => {
-        btn.classList.remove('active');
-        if (btn.dataset.proc === tipoPrincipal) {
-            btn.classList.add('active');
+    var btns = document.querySelectorAll('.proc-btn');
+    for (var i = 0; i < btns.length; i++) {
+        btns[i].classList.remove('active');
+        if (btns[i].dataset.proc === tipoPrincipal) {
+            btns[i].classList.add('active');
         }
-    });
+    }
     mostrarAnatomia(tipoPrincipal || 'trauma');
 }
 
 function mostrarAnatomia(proc) {
-    document.querySelectorAll('.anatomy-panel').forEach(p => p.classList.remove('active'));
-    const panel = document.getElementById('anatomy-' + proc);
+    var panels = document.querySelectorAll('.anatomy-panel');
+    for (var i = 0; i < panels.length; i++) {
+        panels[i].classList.remove('active');
+    }
+    var panel = document.getElementById('anatomy-' + proc);
     if (panel) panel.classList.add('active');
 }
 
 function selectAnatomy(part) {
     anatomiaSeleccionada = part;
 
-    // Feedback visual
-    document.querySelectorAll('.anatomy-point').forEach(p => {
-        p.style.fill = '#666';
-        p.style.opacity = '0.5';
-    });
-    event.target.style.fill = 'var(--accent-orange)';
-    event.target.style.opacity = '1';
+    var points = document.querySelectorAll('.anatomy-point');
+    for (var i = 0; i < points.length; i++) {
+        points[i].style.fill = '#666';
+        points[i].style.opacity = '0.5';
+    }
+    if (event && event.target) {
+        event.target.style.fill = 'var(--accent-orange)';
+        event.target.style.opacity = '1';
+    }
 
-    // Guardar selección
     if (pacienteSeleccionado !== null && pacientes[pacienteSeleccionado]) {
         pacientes[pacienteSeleccionado].anatomia = part;
         guardarPacientes();
@@ -249,32 +271,41 @@ function selectAnatomy(part) {
 
 function selectContrast(tipo) {
     contrasteSeleccionado = tipo;
-    document.querySelectorAll('.contrast-btn').forEach(b => b.classList.remove('active'));
-    event.target.classList.add('active');
+    var btns = document.querySelectorAll('.contrast-btn');
+    for (var i = 0; i < btns.length; i++) {
+        btns[i].classList.remove('active');
+    }
+    if (event && event.target) {
+        event.target.classList.add('active');
+    }
 }
 
 function aceptarSeleccion() {
     if (!anatomiaSeleccionada) {
-        alert('Seleccione una anatomía');
+        alert('Seleccione una anatomia');
         return;
     }
 
-    // Configurar examen según tipo
-    const p = pacientes[pacienteSeleccionado];
-    examenActual = {
-        paciente: p,
-        anatomia: anatomiaSeleccionada,
-        contraste: contrasteSeleccionado,
-        modo: 'fluoroscopia',
-        dosis: 'normal',
-        impulsos: '15',
-        almacenamiento: 'sin',
-        fecha: new Date().toISOString()
-    };
+    var p = pacientes[pacienteSeleccionado];
 
-    // Preconfigurar según tipo de estudio
+    // Si ya existe examenActual, actualizar anatomía, si no, crear nuevo
+    if (!examenActual) {
+        examenActual = {
+            paciente: p,
+            anatomia: anatomiaSeleccionada,
+            contraste: contrasteSeleccionado,
+            modo: 'fluoroscopia',
+            dosis: 'normal',
+            impulsos: '15',
+            almacenamiento: 'sin',
+            fecha: new Date().toISOString()
+        };
+    } else {
+        examenActual.anatomia = anatomiaSeleccionada;
+        examenActual.contraste = contrasteSeleccionado;
+    }
+
     preconfigurarExamen(p.tipoPrincipal);
-
     showScreen('examen');
     renderExamenVivo();
 }
@@ -285,7 +316,7 @@ function cancelarSeleccion() {
 }
 
 function preconfigurarExamen(tipo) {
-    const configs = {
+    var configs = {
         endoscopia: { modo: 'fluoroscopia', dosis: 'normal', impulsos: '15', almac: 'sin' },
         vascular: { modo: 'fluoroscopia', dosis: 'normal', impulsos: '7.5', almac: 'sin' },
         cardio: { modo: 'serie', dosis: 'normal', impulsos: '15', almac: 'todo' },
@@ -294,7 +325,7 @@ function preconfigurarExamen(tipo) {
         'trat-dolor': { modo: 'fluoroscopia', dosis: 'bajo', impulsos: '7.5', almac: 'sin' }
     };
 
-    const config = configs[tipo] || configs.endoscopia;
+    var config = configs[tipo] || configs.endoscopia;
 
     document.getElementById('modo-examen').value = config.modo;
     document.getElementById('dosis-examen').value = config.dosis;
@@ -309,20 +340,16 @@ function preconfigurarExamen(tipo) {
 function renderExamenVivo() {
     if (!examenActual) return;
 
-    const p = examenActual.paciente;
+    var p = examenActual.paciente;
 
-    // Actualizar nombre del paciente
     document.getElementById('patient-name-display').textContent = p.nombre || 'SIN NOMBRE';
-
-    // Actualizar info en panel
     document.getElementById('mini-nombre').textContent = p.nombre || 'Sin nombre';
     document.getElementById('mini-id').textContent = p.id || '---';
 
-    // Actualizar tipo de estudio
-    const tipoText = (p.tipoPrincipal || 'Endoscopia').charAt(0).toUpperCase() + (p.tipoPrincipal || 'endoscopia').slice(1);
-    document.getElementById('study-type-display').innerHTML = `${tipoText}<br>${examenActual.anatomia || 'ERCP'}`;
+    var tipoText = (p.tipoPrincipal || 'Endoscopia').charAt(0).toUpperCase() + (p.tipoPrincipal || 'endoscopia').slice(1);
+    document.getElementById('study-type-display').innerHTML = tipoText + '<br>' + (examenActual.anatomia || 'ERCP');
 
-    const icono = iconosExamenes[p.tipoPrincipal] || '🫚';
+    var icono = iconosExamenes[p.tipoPrincipal] || '🫚';
     document.getElementById('study-icon').textContent = icono;
 
     updateConfig();
@@ -331,33 +358,29 @@ function renderExamenVivo() {
 function updateConfig() {
     if (!examenActual) return;
 
-    const modo = document.getElementById('modo-examen').value;
-    const dosis = document.getElementById('dosis-examen').value;
-    const impulsos = document.getElementById('impulsos-examen').value;
-    const almac = document.getElementById('almac-examen').value;
+    var modo = document.getElementById('modo-examen').value;
+    var impulsos = document.getElementById('impulsos-examen').value;
+    var almacSelect = document.getElementById('almac-examen');
+    var almacText = almacSelect.options[almacSelect.selectedIndex].text;
 
     examenActual.modo = modo;
-    examenActual.dosis = dosis;
     examenActual.impulsos = impulsos;
-    examenActual.almacenamiento = almac;
+    examenActual.almacenamiento = document.getElementById('almac-examen').value;
 
-    // Actualizar títulos de sección
-    const modoText = document.getElementById('modo-examen').options[document.getElementById('modo-examen').selectedIndex].text;
-    const almacText = document.getElementById('almac-examen').options[document.getElementById('almac-examen').selectedIndex].text;
-
-    const sectionTitle = document.querySelector('.section-title:not(.collapsed) .subtitle');
+    var sectionTitle = document.querySelector('.section-title:not(.collapsed) .subtitle');
     if (sectionTitle) {
-        sectionTitle.textContent = `${impulsos}/s ${almacText}`;
+        sectionTitle.textContent = impulsos + '/s ' + almacText;
     }
 
-    // Actualizar modo secundario
+    var modoSelect = document.getElementById('modo-examen');
+    var modoText = modoSelect.options[modoSelect.selectedIndex].text;
     document.getElementById('modo-secundario').textContent = modoText;
-    document.getElementById('modo-sec-sub').textContent = `${impulsos}/s ${almacText}`;
+    document.getElementById('modo-sec-sub').textContent = impulsos + '/s ' + almacText;
 }
 
 function toggleSection(title) {
     title.classList.toggle('collapsed');
-    const content = title.nextElementSibling;
+    var content = title.nextElementSibling;
     if (content) {
         content.classList.toggle('hidden');
     }
@@ -368,34 +391,45 @@ function toggleBtn(btn) {
 }
 
 function reducirDistorsion() {
-    alert('Reducción de distorsión activada');
+    alert('Reduccion de distorsion activada');
 }
 
 function reducirRuido() {
-    alert('Reducción de ruido activada');
+    alert('Reduccion de ruido activada');
 }
 
 function togglePanelFisico() {
-    const panel = document.getElementById('panel-fisico');
-    const btn = document.getElementById('show-panel-btn');
+    var panel = document.getElementById('panel-fisico');
+    var btn = document.getElementById('show-panel-btn');
 
     panel.classList.toggle('visible');
     btn.classList.toggle('hidden');
 }
 
-// Guardar examen
 function guardarExamen() {
     if (!examenActual) return;
 
     examenesGuardados.push({
-        ...examenActual,
+        paciente: examenActual.paciente,
+        anatomia: examenActual.anatomia,
+        contraste: examenActual.contraste,
+        modo: examenActual.modo,
+        dosis: examenActual.dosis,
+        impulsos: examenActual.impulsos,
+        almacenamiento: examenActual.almacenamiento,
+        fecha: new Date().toISOString(),
         id: Date.now()
     });
 
     localStorage.setItem('zenition_examenes', JSON.stringify(examenesGuardados));
 
-    // Agregar a lista de pacientes si no existe
-    const existe = pacientes.find(p => p.id === examenActual.paciente.id);
+    var existe = false;
+    for (var i = 0; i < pacientes.length; i++) {
+        if (pacientes[i].id === examenActual.paciente.id) {
+            existe = true;
+            break;
+        }
+    }
     if (!existe) {
         pacientes.push(examenActual.paciente);
         guardarPacientes();
@@ -403,29 +437,35 @@ function guardarExamen() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// MODO REVISIÓN
+// MODO REVISION
 // ═══════════════════════════════════════════════════════════════
 
 function renderTablaRevision() {
-    const tbody = document.getElementById('tabla-revision');
+    var tbody = document.getElementById('tabla-revision');
+    if (!tbody) return;
+
     if (examenesGuardados.length === 0) {
-        tbody.innerHTML = '<div class="empty-message">No hay exámenes guardados.</div>';
+        tbody.innerHTML = '<div class="empty-message">No hay examenes guardados.</div>';
         return;
     }
 
-    tbody.innerHTML = examenesGuardados.map((e, idx) => `
-        <div class="table-row" onclick="seleccionarExamen(${idx})">
-            <div class="col-checkbox">☐</div>
-            <div class="col-nombre">${e.paciente.nombre || 'Sin nombre'}</div>
-            <div class="col-sexo">${e.paciente.sexo || 'D'}</div>
-            <div class="col-fecha">${e.paciente.fechaNac || ''}</div>
-            <div class="col-id">${e.paciente.id || ''}</div>
-            <div class="col-fecha-ex">${e.paciente.fechaExamen || ''}</div>
-            <div class="col-tipo">${e.paciente.tipoPrincipal || ''}-${e.anatomia || ''}</div>
-            <div class="col-medico">${e.paciente.medico || ''}</div>
-            <div class="col-num">${idx + 1}</div>
-        </div>
-    `).join('');
+    var html = '';
+    for (var i = 0; i < examenesGuardados.length; i++) {
+        var e = examenesGuardados[i];
+        var tipoText = (e.paciente.tipoPrincipal || '') + '-' + (e.anatomia || '');
+        html += '<div class="table-row" onclick="seleccionarExamen(' + i + ')">' +
+            '<div class="col-checkbox">☐</div>' +
+            '<div class="col-nombre">' + (e.paciente.nombre || 'Sin nombre') + '</div>' +
+            '<div class="col-sexo">' + (e.paciente.sexo || 'D') + '</div>' +
+            '<div class="col-fecha">' + (e.paciente.fechaNac || '') + '</div>' +
+            '<div class="col-id">' + (e.paciente.id || '') + '</div>' +
+            '<div class="col-fecha-ex">' + (e.paciente.fechaExamen || '') + '</div>' +
+            '<div class="col-tipo">' + tipoText + '</div>' +
+            '<div class="col-medico">' + (e.paciente.medico || '') + '</div>' +
+            '<div class="col-num">' + (i + 1) + '</div>' +
+        '</div>';
+    }
+    tbody.innerHTML = html;
 }
 
 function seleccionarExamen(idx) {
@@ -433,7 +473,7 @@ function seleccionarExamen(idx) {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// FUNCIONES DEL MENÚ LATERAL
+// FUNCIONES DEL MENU LATERAL
 // ═══════════════════════════════════════════════════════════════
 
 function editarPaciente() {
@@ -441,24 +481,20 @@ function editarPaciente() {
         alert('Seleccione un paciente primero');
         return;
     }
-    const p = pacientes[pacienteSeleccionado];
+    var p = pacientes[pacienteSeleccionado];
 
-    // Rellenar formulario
     document.getElementById('nombre-paciente').value = p.nombre || '';
     document.getElementById('id-paciente').value = p.id || '';
     document.getElementById('peso').value = p.peso || '';
     document.getElementById('altura').value = p.altura || '';
     document.getElementById('referencia').value = p.referencia || '';
 
-    // Sexo
-    const sexoRadio = document.querySelector(`input[name="sexo"][value="${p.sexo}"]`);
+    var sexoRadio = document.querySelector('input[name="sexo"][value="' + p.sexo + '"]');
     if (sexoRadio) sexoRadio.checked = true;
 
-    // Tipo
     document.getElementById('tipo-examen-principal').value = p.tipoPrincipal || '';
     actualizarSubtipos();
     document.getElementById('tipo-examen-subtipo').value = p.tipoSubtipo || '';
-
     document.getElementById('medico').value = p.medico || '';
 
     showScreen('agregar');
@@ -469,7 +505,7 @@ function borrarPaciente() {
         alert('Seleccione un paciente primero');
         return;
     }
-    if (confirm('¿Eliminar este paciente?')) {
+    if (confirm('Eliminar este paciente?')) {
         pacientes.splice(pacienteSeleccionado, 1);
         pacienteSeleccionado = null;
         guardarPacientes();
@@ -478,8 +514,7 @@ function borrarPaciente() {
 }
 
 function obtenerListaTrabajo() {
-    alert('Obteniendo lista de trabajo del servidor...\n(Esto es una simulación)');
-    // Aquí se podría cargar desde una API real
+    alert('Obteniendo lista de trabajo del servidor... (Esto es una simulacion)');
 }
 
 function infoExamen() {
@@ -487,13 +522,8 @@ function infoExamen() {
         alert('Seleccione un paciente primero');
         return;
     }
-    const p = pacientes[pacienteSeleccionado];
-    alert(`Información del examen:
-
-Paciente: ${p.nombre}
-ID: ${p.id}
-Tipo: ${p.tipoPrincipal}-${p.tipoSubtipo}
-Médico: ${p.medico || 'No asignado'}`);
+    var p = pacientes[pacienteSeleccionado];
+    alert('Informacion del examen: Paciente: ' + p.nombre + ', ID: ' + p.id + ', Tipo: ' + p.tipoPrincipal + '-' + p.tipoSubtipo + ', Medico: ' + (p.medico || 'No asignado'));
 }
 
 function iniciarExamen() {
@@ -502,7 +532,7 @@ function iniciarExamen() {
         return;
     }
 
-    const p = pacientes[pacienteSeleccionado];
+    var p = pacientes[pacienteSeleccionado];
     examenActual = {
         paciente: p,
         anatomia: p.tipoSubtipo || '',
@@ -513,13 +543,13 @@ function iniciarExamen() {
         almacenamiento: 'sin'
     };
 
-    preconfigurarExamen(p.tipoPrincipal);
-    showScreen('examen');
-    renderExamenVivo();
+    // Ir a seleccionar anatomía primero
+    showScreen('seleccion');
+    setupProcedureForPatient(p.tipoPrincipal);
 }
 
 // ═══════════════════════════════════════════════════════════════
-// MODO REVISIÓN - FUNCIONES
+// MODO REVISION - FUNCIONES
 // ═══════════════════════════════════════════════════════════════
 
 function mostrarExamen() {
@@ -530,16 +560,16 @@ function mostrarExamen() {
         showScreen('examen');
         renderExamenVivo();
     } else {
-        alert('No hay exámenes para mostrar');
+        alert('No hay examenes para mostrar');
     }
 }
 
 function modificarExamen() {
-    alert('Función de modificación de examen\n(Esto es una simulación)');
+    alert('Funcion de modificacion de examen (Esto es una simulacion)');
 }
 
 function borrarExamen() {
-    if (confirm('¿Eliminar este examen de la lista?')) {
+    if (confirm('Eliminar este examen de la lista?')) {
         examenesGuardados.pop();
         localStorage.setItem('zenition_examenes', JSON.stringify(examenesGuardados));
         renderTablaRevision();
@@ -547,18 +577,18 @@ function borrarExamen() {
 }
 
 function informeDosis() {
-    const dosisTotal = examenesGuardados.length * 0.5;
-    alert(`Informe de Dosis Acumulada
-
-Total de exámenes: ${examenesGuardados.length}
-Dosis acumulada estimada: ${dosisTotal.toFixed(3)} mGy
-DAP acumulado: ${(dosisTotal * 2.5).toFixed(2)} cGy·cm²`);
+    var dosisTotal = examenesGuardados.length * 0.5;
+    alert('Informe de Dosis Acumulada. Total de examenes: ' + examenesGuardados.length + ', Dosis acumulada estimada: ' + dosisTotal.toFixed(3) + ' mGy, DAP acumulado: ' + (dosisTotal * 2.5).toFixed(2) + ' cGy·cm2');
 }
 
 function cerrarRevision() {
     showScreen('programa');
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelector('[data-tab="programa"]').classList.add('active');
+    var tabs = document.querySelectorAll('.tab');
+    for (var i = 0; i < tabs.length; i++) {
+        tabs[i].classList.remove('active');
+    }
+    var progTab = document.querySelector('[data-tab="programa"]');
+    if (progTab) progTab.classList.add('active');
 }
 
 function infoExamenRevision() {
@@ -570,43 +600,80 @@ function volverAdquisicion() {
     if (examenActual) renderExamenVivo();
 }
 
+function seleccionarAnatomiaDesdeExamen() {
+    if (!examenActual) {
+        alert('No hay examen activo');
+        return;
+    }
+    // Guardar configuración actual antes de cambiar
+    showScreen('seleccion');
+    setupProcedureForPatient(examenActual.paciente.tipoPrincipal);
+}
+
+function guardarExamenYVolver() {
+    guardarExamen();
+    alert('Examen guardado correctamente');
+    showScreen('programa');
+    renderTablaPacientes();
+    // Actualizar tabs
+    var tabs = document.querySelectorAll('.tab');
+    for (var i = 0; i < tabs.length; i++) {
+        tabs[i].classList.remove('active');
+    }
+    var progTab = document.querySelector('[data-tab="programa"]');
+    if (progTab) progTab.classList.add('active');
+}
+
+function volverAPrograma() {
+    showScreen('programa');
+    renderTablaPacientes();
+    // Actualizar tabs
+    var tabs = document.querySelectorAll('.tab');
+    for (var i = 0; i < tabs.length; i++) {
+        tabs[i].classList.remove('active');
+    }
+    var progTab = document.querySelector('[data-tab="programa"]');
+    if (progTab) progTab.classList.add('active');
+}
+
 // ═══════════════════════════════════════════════════════════════
 // TECLADO - ATAJOS
 // ═══════════════════════════════════════════════════════════════
 
-document.addEventListener('keydown', (e) => {
-    // ESC - Volver a programa
+document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
-        if (document.getElementById('screen-examen').classList.contains('active')) {
+        var examenScreen = document.getElementById('screen-examen');
+        var programaScreen = document.getElementById('screen-programa');
+        if (examenScreen && examenScreen.classList.contains('active')) {
             guardarExamen();
             showScreen('programa');
-        } else if (!document.getElementById('screen-programa').classList.contains('active')) {
+        } else if (programaScreen && !programaScreen.classList.contains('active')) {
             showScreen('programa');
         }
     }
 
-    // F1 - Ayuda
     if (e.key === 'F1') {
         e.preventDefault();
-        alert('Atajos de teclado:\n\nESC - Volver/Cancelar\nF1 - Esta ayuda\n\nEn examen:\nEspacio - Activar/desactivar rayos X (simulado)');
+        alert('Atajos de teclado: ESC - Volver/Cancelar, F1 - Esta ayuda. En examen: Espacio - Activar/desactivar rayos X (simulado)');
     }
 });
 
 // Reloj en barra inferior
-setInterval(() => {
-    const horaEl = document.getElementById('hora-val');
+setInterval(function() {
+    var horaEl = document.getElementById('hora-val');
     if (horaEl) {
-        const now = new Date();
-        horaEl.textContent = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
+        var now = new Date();
+        horaEl.textContent = now.getHours() + ':' + now.getMinutes().toString().padStart(2, '0');
     }
 }, 1000);
 
-// Simulación de dosis acumulada
-let dosisSimulada = 0;
-setInterval(() => {
-    if (document.getElementById('screen-examen').classList.contains('active')) {
+// Simulacion de dosis acumulada
+var dosisSimulada = 0;
+setInterval(function() {
+    var examenScreen = document.getElementById('screen-examen');
+    if (examenScreen && examenScreen.classList.contains('active')) {
         dosisSimulada += 0.001;
-        const mgyEl = document.getElementById('mgy-val');
+        var mgyEl = document.getElementById('mgy-val');
         if (mgyEl) mgyEl.textContent = dosisSimulada.toFixed(3);
     }
 }, 2000);
