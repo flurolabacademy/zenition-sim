@@ -318,7 +318,7 @@ function cancelarSeleccion() {
 function preconfigurarExamen(tipo) {
     var configs = {
         endoscopia: { modo: 'fluoroscopia', dosis: 'normal', impulsos: '15', almac: 'sin' },
-        vascular: { modo: 'fluoroscopia', dosis: 'normal', impulsos: '7.5', almac: 'sin' },
+        vascular: { modo: 'sustraccion', dosis: 'normal', impulsos: '7.5', almac: 'todo' },
         cardio: { modo: 'serie', dosis: 'normal', impulsos: '15', almac: 'todo' },
         trauma: { modo: 'serie', dosis: 'normal', impulsos: '15', almac: 'todo' },
         urologia: { modo: 'fluoroscopia', dosis: 'normal', impulsos: '15', almac: 'sin' },
