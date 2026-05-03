@@ -175,6 +175,18 @@ function iniciarExamenDesdeForm() {
     guardarPacientes();
     pacienteSeleccionado = pacientes.length - 1;
 
+    // Crear examenActual y preconfigurar
+    examenActual = {
+        paciente: paciente,
+        anatomia: paciente.tipoSubtipo || '',
+        contraste: 'Yodo',
+        modo: 'fluoroscopia',
+        dosis: 'normal',
+        impulsos: '15',
+        almacenamiento: 'sin'
+    };
+    preconfigurarExamen(paciente.tipoPrincipal);
+
     // Ir a seleccionar anatomía primero
     showScreen('seleccion');
     setupProcedureForPatient(paciente.tipoPrincipal);
@@ -327,10 +339,19 @@ function preconfigurarExamen(tipo) {
 
     var config = configs[tipo] || configs.endoscopia;
 
+    // Actualizar DOM
     document.getElementById('modo-examen').value = config.modo;
     document.getElementById('dosis-examen').value = config.dosis;
     document.getElementById('impulsos-examen').value = config.impulsos;
     document.getElementById('almac-examen').value = config.almac;
+
+    // Actualizar objeto examenActual si existe
+    if (examenActual) {
+        examenActual.modo = config.modo;
+        examenActual.dosis = config.dosis;
+        examenActual.impulsos = config.impulsos;
+        examenActual.almacenamiento = config.almac;
+    }
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -542,6 +563,9 @@ function iniciarExamen() {
         impulsos: '15',
         almacenamiento: 'sin'
     };
+
+    // Preconfigurar según tipo de estudio (sobreescribirá los valores por defecto)
+    preconfigurarExamen(p.tipoPrincipal);
 
     // Ir a seleccionar anatomía primero
     showScreen('seleccion');
